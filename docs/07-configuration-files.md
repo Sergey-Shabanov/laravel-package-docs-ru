@@ -8,9 +8,9 @@ date: 2019-09-17
 
 # Разработка пакетов для Laravel · Конфигурационные файлы
 
-It is quite likely that your package allows configuration by the end-user.
+Вполне вероятно, что ваш пакет допускает конфигурирование конечным пользователем.
 
-If you want to offer custom configuration options, create a new `config` directory in the package's root and add a file called `config.php`, which returns an array of options.
+Если вы хотите предложить собственные параметры конфигурации, создайте новый каталог `config` в корне пакета и добавьте файл с именем `config.php`, который возвращает массив параметров:
 
 ```php
 // 'config/config.php'
@@ -18,13 +18,13 @@ If you want to offer custom configuration options, create a new `config` directo
 
 return [
   'posts_table' => 'posts',
-  // other options...
+  // Другие параметры ...
 ];
 ```
 
-## Merging Into the Existing Configuration
+## Слияние с существующей конфигурацией
 
-After registering the config file in the `register()` method of our service provider under a specific "key" ('blogpackage' in our demo), we can access the config values from the config helper by prefixing our "key" as follows: `config('blogpackage.posts_table')`.
+После регистрации конфигурационного файла в методе `register()` нашего поставщика служб под определенным «ключом» (`blogpackage` в нашем случае), мы можем получить доступ к значениям конфигурации из глобального помощника `config`, добавив префикс нашего «ключа» следующим образом: `config('blogpackage.posts_table')`.
 
 ```php
 // 'BlogPackageServiceProvider.php'
@@ -34,9 +34,9 @@ public function register()
 }
 ```
 
-## Exporting
+## Публикация конфигурационного файла
 
-To allow users to modify the default config values, we need to provide them with the option to export the config file. We can register all "publishables" within the `boot()` method of the package's service provider. Since we only want to offer this functionality whenever the package is booted from the console, we'll first check if the current app runs in the console. We'll register the publishable config file under the 'config' tag (the second parameter of the `$this->publishes()` function call).
+Чтобы пользователи могли изменять значения конфигурации по умолчанию, нам необходимо предоставить им возможность экспортировать конфигурационный файл. Мы можем зарегистрировать все «публикуемые» ресурсы в методе `boot()` поставщика служб пакета. Поскольку мы хотим использовать функционал публикации только при загрузке из консоли, то сначала мы проверим, что текущее приложение запущено из консоли. Мы зарегистрируем публикуемый файл конфигурации под тегом `config`, передав второй параметр методу `publishes()`.
 
 ```php
 // 'BlogPackageServiceProvider.php'
@@ -52,7 +52,7 @@ public function boot()
 }
 ```
 
-The config file can now be exported using the command listed below, creating a `blogpackage.php` file in the `/config` directory of the Laravel project using this package.
+Конфигурационный файл `blogpackage.php` пакета можно экспортировать в каталог `/config` проекта Laravel, используя команду, указанную ниже:
 
 ```bash
 php artisan vendor:publish --provider="JohnDoe\BlogPackage\BlogPackageServiceProvider" --tag="config"
