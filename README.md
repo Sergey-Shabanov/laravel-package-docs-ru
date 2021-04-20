@@ -15,7 +15,7 @@
 - [ ] [Фасады](./docs/05-facades.md)
 - [ ] [Команды Artisan](./docs/06-artisan-commands.md)
 - [x] [Конфигурационные файлы](./docs/07-configuration-files.md)
-- [ ] [Модели и миграции](./docs/08-models-and-migrations.md)
+- [x] [Модели и миграции](./docs/08-models-and-migrations.md)
 - [x] [Маршруты, контроллеры и шаблоны](./docs/09-routing.md)
 - [ ] [События и слушатели](./docs/10-events-and-listeners.md)
 - [x] [Посредники](./docs/11-middleware.md)

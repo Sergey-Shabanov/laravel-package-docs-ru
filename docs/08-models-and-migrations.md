@@ -8,13 +8,13 @@ date: 2019-09-17
 
 # Разработка пакетов для Laravel · Модели и миграции
 
-There are scenarios where you'll need to ship one or more Eloquent models with your package. For example, when you're developing a Blog related package that includes a `Post` model.
+Есть сценарии, в которых вам нужно будет добавить в ваш пакет одну или несколько моделей Eloquent. Например, когда вы разрабатываете связанный с блогом пакет, содержащий модель `Post`.
 
-This chapter will cover how to provide Eloquent models within your package, including migrations, tests, and how to possibly add a relationship to the `App\User` model that ships with Laravel.
+В этой главе будет рассказано, как добавить модели Eloquent в ваш пакет, включая миграции, тесты и как, возможно, добавить отношения к модели `App\User`, которая уже содержится в приложениях Laravel.
 
-## Models
+## Модели
 
-Models in our package do not differ from models we would use in a standard Laravel application. Since we required the **Orchestra Testbench**, we can create a model extending the Laravel Eloquent model and save it within the `src/Models` directory:
+Модели нашего пакета не отличаются от моделей, которые мы использовали бы в стандартном приложении Laravel. Поскольку мы используем **Orchestra Testbench**, то мы можем создать модель, расширяющую модель Laravel Eloquent, и сохранить ее в каталоге `src/Models`:
 
 ```php
 // 'src/Models/Post.php'
@@ -29,24 +29,24 @@ class Post extends Model
 {
   use HasFactory;
 
-  // Disable Laravel's mass assignment protection
+  // Отключить защиту от массового присвоения Laravel.
   protected $guarded = [];
 }
 ```
 
-There are multiple ways to generate models together with a migration automatically. The straightforward approach is to use a regular Laravel application and then copy over the artisan-generated files to your package and then update the namespaces.
+Существует несколько способов генерации моделей вместе с автоматической миграцией. Простой подход – использовать обычное приложение Laravel, а затем переместить файлы, сгенерированные с помощью Artisan, в свой пакет, а затем изменить их пространства имен.
 
-If you are looking for ways to automate the scaffolding within your package, you might install one of the following tools as a `dev` dependency within your package and use a CLI command to generate the scaffolds.
+Если вы ищете способы автоматизации создания каркасов в вашем пакете, то вы можете установить один из следующих инструментов в качестве зависимости `dev` в вашем пакете и использовать команду интерфейса командной строки для генерации каркасов.
 
 - [Laravel Package Tools](https://github.com/beyondcode/laravel-package-tools)
 - [Laravel Packer](https://github.com/bitfumes/laravel-packer)
 - [Laravel Package Maker](https://github.com/naoray/laravel-package-maker)
 
-## Migrations
+## Миграции
 
-Migrations live in the `database/migrations` folder in a Laravel application. In our package we mimic this file structure. Therefore, database migrations will not live in the `src/` directory but in their own `database/migrations` folder. Our package's root directory now contains at least two folders: `src/` and `database/`.
+В приложении Laravel миграции находятся в каталоге `database/migrations`. В нашем пакете мы имитируем эту файловую структуру. Следовательно, миграции базы данных будут находиться не в каталоге `src/`, а в своем собственном каталоге `database/migrations`. Корневой каталог нашего пакета теперь содержит как минимум два каталога: `src/` и `database/`.
 
-After you’ve generated a migration, copy it from your “dummy” Laravel application to the package’s `database/migrations` folder.
+После того, как вы сгенерировали миграцию, скопируйте ее из своего «фиктивного» приложения Laravel в каталог пакета `database/migrations`.
 
 ```php
 // 'database/migrations/2018_08_08_100000_create_posts_table.php'
@@ -83,19 +83,19 @@ class CreatePostsTable extends Migration
 }
 ```
 
-From this point on, there are two possible approaches to present the end-user with our migration(s). We can either publish (specific) migrations (method 1) or load all migrations from our package automatically (method 2).
+С этого момента есть два возможных подхода к представлению конечному пользователю наших миграций. Мы можем либо опубликовать определенные миграции (метод 1), либо автоматически загрузить все миграции из нашего пакета (метод 2).
 
-### Publishing Migrations (method 1)
+### Метод первый: публикация миграций
 
-In this approach, we register that our package “publishes” its migrations. We can do that as follows in the `boot()` method of our package’s service provider, employing the `publishes()` method, which takes two arguments:
+В этом подходе мы регистрируем, что наш пакет «публикует» свои миграции. Мы можем сделать это следующим образом в методе `boot()` поставщика служб нашего пакета, используя метод `publishes()`, который принимает два аргумента:
 
-1. an array of file paths ("source path" => "destination path")
+1. массив путей к файлам `["путь исходника" => "путь назначения"]`
 
-2. the name (“tag”) we assign to this group of related publishable assets.
+2. тег, присваиваемый группе связанных публикуемых ресурсов.
 
-In this approach, it is conventional to use a "stubbed" migration. This stub is exported to a real migration when the user of our package publishes the migrations. Therefore, rename any migrations to remove the timestamp and add a `.stub` extension. In our example migration, this would lead to: `create_posts_table.php.stub`.
+В этом подходе обычно используется «заготовка» миграции. Эта заготовка экспортируется в реальную миграцию, когда пользователь нашего пакета публикует миграции. Поэтому переименуйте миграции, чтобы удалить отметку времени и добавить расширение `.stub`. В нашем примере миграции это приведет к именованию: `create_posts_table.php.stub`.
 
-Next, we can implement exporting the migration(s) as follows:
+Затем мы можем реализовать экспорт миграции следующим образом:
 
 ```php
 class BlogPackageServiceProvider extends ServiceProvider
@@ -103,11 +103,11 @@ class BlogPackageServiceProvider extends ServiceProvider
   public function boot()
   {
     if ($this->app->runningInConsole()) {
-      // Export the migration
+      // Экспорт миграции.
       if (! class_exists('CreatePostsTable')) {
         $this->publishes([
           __DIR__ . '/../database/migrations/create_posts_table.php.stub' => database_path('migrations/' . date('Y_m_d_His', time()) . '_create_posts_table.php'),
-          // you can add any number of migrations here
+          // Здесь вы можете добавить любое количество миграций.
         ], 'migrations');
       }
     }
@@ -115,16 +115,16 @@ class BlogPackageServiceProvider extends ServiceProvider
 }
 ```
 
-In the code listed above, we first check if the application is running in the console. Next, we'll check if the user already published the migrations. If not, we will publish the `create_posts_table` migration in the migrations folder in the database path, prefixed with the current date and time.
+В приведенном выше коде мы сначала проверяем, запущено ли приложение в режиме консоли. Затем мы проверяем, публиковал ли пользователь миграции. Если нет, то мы опубликуем миграцию `create_posts_table` в каталоге `migrations` каталога `database` с префиксом текущей даты и времени.
 
-The migrations of this package are now publishable under the “migrations” tag via:
+Миграции этого пакета теперь можно публиковать, используя тег `migrations`:
 
 ```bash
 php artisan vendor:publish --provider="JohnDoe\BlogPackage\BlogPackageServiceProvider" --tag="migrations"
 ```
 
-### Loading Migrations Automatically (method 2)
-While the method described above gives full control over which migrations are published, Laravel offers an alternative approach making use of the `loadMigrationsFrom` helper ([see docs](https://laravel.com/docs/packages#migrations)). By specifying a migrations directory in the package's service provider, all migrations will be executed when the end-user executes `php artisan migrate` from within their Laravel application.
+### Метод второй: автоматическая загрузка миграций
+Хотя описанный выше метод дает полный контроль над тем, какие миграции публиковать, Laravel предлагает альтернативный подход, использующий метод `loadMigrationsFrom` ([см. документацию](https://github.com/russsiq/laravel-docs-8.x-ru/blob/main/docs/packages.md#migrations)). Если указать каталог миграции в поставщике служб пакета, то все миграции будут запущены, когда конечный пользователь выполнит `php artisan migrate` из своего приложения Laravel.
 
 ```php
 class BlogPackageServiceProvider extends ServiceProvider
@@ -136,15 +136,15 @@ class BlogPackageServiceProvider extends ServiceProvider
 }
 ```
 
-Make sure to include a proper timestamp to your migrations, otherwise, Laravel can't process them. For example: `2018_08_08_100000_example_migration.php`. You can not use a stub (like in method 1) when choosing this approach.
+Убедитесь, что вы указали правильную временную метку для своих миграций, иначе Laravel не сможет их обработать. Например: `2018_08_08_100000_example_migration.php`. При таком подходе нельзя использовать заготовку как это определено в [первом методе](#метод-первый-публикация-миграций).
 
-## Testing Models and Migrations
+## Тестирование моделей и миграций
 
-As we create an example test, we will follow some of the basics of test-driven-development (TDD) here. Whether or not you practice TDD in your typical workflow, explaining the steps here helps expose possible problems you might encounter along the way, thus making troubleshooting simpler. Let's get started:
+Создавая пример теста, мы будем следовать некоторым основам разработки через тестирование (TDD). Независимо от того, практикуете ли вы TDD в своем привычном рабочем процессе, объяснение шагов здесь помогает выявить возможные проблемы, с которыми вы можете столкнуться на этом пути, что упрощает устранение неполадок. Давайте начнем.
 
-### Writing a Unit Test
+### Написание модульных тестов
 
-Now that we’ve set up **PHPunit**, let’s create a unit test for our Post model in the `tests/Unit` directory called `PostTest.php`. Let's write a test that verifies a `Post` has a title:
+Теперь, когда мы настроили **PHPunit**, давайте создадим модульный тест для нашей модели `Post` в каталоге `tests/Unit` с именем `PostTest.php`. Давайте напишем тест, который проверяет наличие заголовка у поста:
 
 ```php
 // 'tests/Unit/PostTest.php'
@@ -169,11 +169,11 @@ class PostTest extends TestCase
 }
 ```
 
-Note: we're using the `RefreshDatabase` trait to be sure that we start with a clean database state before every test.
+> **Примечание**: мы используем трейт `RefreshDatabase`, чтобы быть уверенным, что мы начинаем с пустой базой данных перед каждым тестом.
 
-### Running the Tests
+### Запуск тестов
 
-We can run our test suite by calling the PHPUnit binary in our vendor directory using `./vendor/bin/phpunit`. However, let’s alias this to `test` in our `composer.json` file by adding a “script”:
+Мы можем запустить наш набор тестов, вызвав двоичный файл PHPUnit в нашем каталоге `vendor`, используя `./vendor/bin/phpunit`. Однако давайте добавим псевдоним `test` в нашем файле `composer.json` в ключе `scripts`:
 
 ```json
 {
@@ -188,19 +188,19 @@ We can run our test suite by calling the PHPUnit binary in our vendor directory 
 }
 ```
 
-We can now run `composer test` to run all of our tests and `composer test-f` followed by a test method/class's name to run that test solely.
+Теперь мы можем выполнить команду `composer test`, чтобы запустить все наши тесты или `composer test-f` с именем тестового класса / метода, чтобы запустить только указанный класс / метод.
 
-When we run `composer test-f a_post_has_a_title`, it leads us to the following error:
+Выполнение команды `composer test-f a_post_has_a_title` приведет нас к следующей ошибке:
 
 ```
 Error: Class 'Database\Factories\JohnDoe\BlogPackage\Models\PostFactory' not found
 ```
 
-The abovementioned error tells us that we need to create a model factory for the `Post` model.
+Вышеупомянутая ошибка говорит нам о необходимости создать фабрику модели `Post`.
 
-### Creating a Model Factory
+### Создание фабрики модели
 
-Let’s create a `PostFactory` in the `database/factories` folder:
+Давайте создадим `PostFactory` в каталоге `database/factories`:
 
 ```php
 // 'database/factories/PostFactory.php'
@@ -225,7 +225,7 @@ class PostFactory extends Factory
 
 ```
 
-As with the `src` folder, for our package users to be able to use our model factories, we'll need to register the `database/factories` folder within a namespace in our `composer.json` file:
+Как и в случае с каталогом `src`, для того, чтобы пользователи нашего пакета могли использовать наши фабрики моделей, нам нужно зарегистрировать каталог `database/factories` в пространстве имен в нашем файле `composer.json`:
 
 ```json
 {
@@ -240,18 +240,18 @@ As with the `src` folder, for our package users to be able to use our model fact
 }
 ```
 
-After setting it up, don't forget to run `composer dump-autoload`.
+После изменений не забудьте выполнить `composer dump-autoload`.
 
-### Configuring our Model factory
+### Конфигурирование фабрики модели
 
-Rerunning our tests lead to the following error:
+Повторный запуск наших тестов приведет к следующей ошибке:
 
 ```
 Error: Class 'Database\Factories\JohnDoe\BlogPackage\Models\PostFactory' not found
 ```
 
-The abovementioned error is caused by Laravel, which tries to resolve the Model class for our `PostFactory` assuming the default namespaces of a usual project (as of version 8.x, `App` or `App\Models`).
-To be able to instantiate the right Model from our package with the `Post::factory()` method, we need to add the following method to our `Post` Model:
+Вышеупомянутая ошибка вызвана Laravel, который пытается найти класс `Model` для `PostFactory`, принимая пространства имен `App\Models` по умолчанию для обычного проекта.
+Чтобы создать экземпляр требуемой модели из нашего пакета с помощью метода `Post::factory()`, необходимо добавить следующий метод в нашу модель `Post`:
 
 ```php
 // 'src/Models/Post.php'
@@ -262,24 +262,24 @@ protected static function newFactory()
 }
 ```
 
-However, the tests will still fail since we haven’t created the `posts` table in our in-memory SQLite database. We need to tell our tests to first perform all migrations before running the tests.
+Однако тесты все равно не будут пройдены, поскольку мы не создали таблицу `posts` в нашей базе данных SQLite. Нам нужно указать нашим тестам, чтобы они выполняли все миграции перед запуском тестов.
 
-Let’s load the migrations in the `getEnvironmentSetUp()` method of our `TestCase`:
+Давайте загрузим миграции в методе `getEnvironmentSetUp()` нашего `TestCase`:
 
 ```php
 // 'tests/TestCase.php'
 
 public function getEnvironmentSetUp($app)
 {
-  // import the CreatePostsTable class from the migration
+  // Импортировать класс `CreatePostsTable` из миграции.
   include_once __DIR__ . '/../database/migrations/create_posts_table.php.stub';
 
-  // run the up() method of that migration class
+  // Выполнить метод `up()` импортированного класса миграции.
   (new \CreatePostsTable)->up();
 }
 ```
 
-Now, running the tests again will lead to the expected error of no ‘title’ column being present on the ‘posts’ table. Let’s fix that in the `create_posts_table.php.stub` migration:
+Теперь повторный запуск тестов приведет к ожидаемой ошибке: в таблице `posts` нет столбца `title`. Давайте исправим это миграции `create_posts_table.php.stub`:
 
 ```php
 // 'database/migrations/create_posts_table.php.stub'
@@ -291,11 +291,11 @@ Schema::create('posts', function (Blueprint $table) {
 
 ```
 
-After running the test, you should see it passing.
+После запуска теста вы должны увидеть, что он был пройден.
 
-### Adding Tests for Other Columns
+### Добавление тестов для других столбцов
 
-Let’s add tests for the “body” and “author_id”:
+Добавим тесты для `body` и `author_id`:
 
 ```php
 // 'tests/Unit/PostTest.php'
@@ -320,16 +320,16 @@ class PostTest extends TestCase
   /** @test */
   function a_post_has_an_author_id()
   {
-    // Note that we are not assuming relations here, just that we have a column to store the 'id' of the author
-    $post = Post::factory()->create(['author_id' => 999]); // we choose an off-limits value for the author_id so it is unlikely to collide with another author_id in our tests
+    // Обратите внимание, что мы не предполагаем здесь отношений, просто у нас есть столбец для хранения идентификатора автора.
+    $post = Post::factory()->create(['author_id' => 999]); // мы выбираем недопустимое значение для `author_id`, поэтому маловероятно, что возникнуть коллизии с другим `author_id` в наших тестах
     $this->assertEquals(999, $post->author_id);
   }
 }
 ```
 
-You can continue driving this out with TDD on your own, running the tests, exposing the next thing to implement, and testing again.
+Вы можете продолжить работу над этим с помощью TDD самостоятельно: запустить тесты, определить следующий функционал, который необходимо реализовать, и снова запустить тесты.
 
-Eventually you’ll end up with a model factory and migration as follows:
+В конце концов у вас получится фабрика модели и миграция как ниже:
 
 ```php
 // 'database/factories/PostFactory.php'
@@ -356,7 +356,7 @@ class PostFactory extends Factory
 
 ```
 
-For now, we hard-coded the ‘author_id’. In the next section, we'll see how we could whip up a relationship with a `User` model.
+На данный момент мы жестко запрограммировали `author_id`. В следующем разделе мы увидим, как можно урегулировать отношения с моделью `User`.
 
 ```php
 // 'database/migrations/create_posts_table.php.stub'
@@ -370,19 +370,19 @@ Schema::create('posts', function (Blueprint $table) {
 });
 ```
 
-## Models related to App\User
+## Определение отношений с App\User
 
-Now that we have an “author_id” column on our `Post` model, let’s create a relationship between a `Post` and a `User`. However, we have a problem since we need a `User` model, but this model also comes out-of-the-box with a fresh installation of the Laravel framework…
+Теперь, когда у нас есть столбец `author_id` в нашей модели `Post`, давайте создадим связь между `Post` и `User`. Однако у нас есть проблема, поскольку нам нужна модель `User`, но эта модель включена по умолчанию во фреймворк Laravel ...
 
-We can’t just provide our own `User` model, since you likely want your end-user to be able to hook up the `User` model from their Laravel app.
+Мы не можем просто предоставить нашу собственную модель `User`, поскольку вы, вероятно, хотите, чтобы ваш конечный пользователь мог использовать модель `User` из своего приложения Laravel.
 
-Below, there are two options to create a relation  
+Ниже представлены два варианта создания отношения.
 
-### Approach 1: Fetching the User model from the Auth configuration
+### Вариант первый: получение модели пользователя из конфигурации аутентификации
 
-If you simply want to create a relationship between **authenticated users** and *e.g.* a `Post` model, the easiest option is to reference the Model that is used in the `config/auth.php` file. By default, this is the `App\Models\User` Eloquent model.
+Если вы просто хотите создать связь между **аутентифицированными пользователями** и *например* моделью `Post`, то самым простым вариантом является ссылка на модель, которая используется в файле `config/auth.php`. По умолчанию это модель Eloquent `App\Models\User`.
 
-If you just want to target the Eloquent model that is responsible for the authentication, create a `belongsToMany` relationship on the `Post` model as follows:
+Если вы просто хотите назначить модель Eloquent, которая отвечает за аутентификацию, то создайте отношение `belongsToMany` в модели `Post` следующим образом:
 
 ```php
 // Post model
@@ -395,18 +395,18 @@ class Post extends Model
 }
 ```
 
-However, what if the user of our package has an `Admin` and a `User` model and the author of a `Post` can be an `Admin` model or a `User` model ? In such cases, you can opt for a polymorphic relationship.
+Однако что, если у пользователя нашего пакета есть модели `Admin` и `User` и автором поста может быть как модель `Admin`, так и `User`? В таких случаях вы можете выбрать полиморфные отношения.
 
-### Approach 2: Using a Polymorphic Relationship
+### Вариант второй: использование полиморфных отношений
 
-Instead of opting for a conventional one-to-many relationship (a user can have many posts, and a post belongs to a user), we’ll use a **polymorphic** one-to-many relationship where a `Post` morphs to a specific related model (not necessarily a `User` model).
+Вместо того, чтобы выбирать обычные отношения «один-ко-многим» (у пользователя может быть много постов, и пост принадлежит пользователю), мы будем использовать **полиморфные** отношения «один-ко-многим», где `Post` имеет полиморфно связанную модель (не обязательно модель `User`).
 
-Let’s compare the standard and polymorphic relationships.
+Сравним обычные и полиморфные отношения.
 
-Definition of a standard one-to-many relationship:
+Определение обычного отношения «один-ко-многим»:
 
 ```php
-// Post model
+// Модель `Post`.
 class Post extends Model
 {
   public function author()
@@ -415,7 +415,7 @@ class Post extends Model
   }
 }
 
-// User model
+// Модель `User`.
 class User extends Model
 {
   public function posts()
@@ -425,10 +425,10 @@ class User extends Model
 }
 ```
 
-Definition of a polymorphic one-to-many relationship:
+Определение полиморфного отношения «один-ко-многим»:
 
 ```php
-// Post model
+// Модель `Post`.
 class Post extends Model
 {
   public function author()
@@ -437,7 +437,7 @@ class Post extends Model
   }
 }
 
-// User (or other) model
+// Модель `User` (или аналогичная).
 use JohnDoe\BlogPackage\Models\Post;
 
 class Admin extends Model
@@ -449,7 +449,7 @@ class Admin extends Model
 }
 ```
 
-After adding this `author()` method to our Post model, we need to update our `create_posts_table_migration.php.stub` file to reflect our polymorphic relationship. Since we named the method “author”, Laravel expects an “author_id” and an “author_type” field. The latter contains a string of the namespaced model we refer to (for example, “App\User”).
+После добавления этого метода `author()` в нашу модель `Post` нам нужно обновить наш файл `create_posts_table_migration.php.stub`, чтобы отразить наши полиморфные отношения. Поскольку мы назвали метод `author`, то Laravel ожидает поля `author_id` и `author_type`. Последний содержит строку пространства имен модели, на которую мы ссылаемся, например, `App\User`.
 
 ```php
 Schema::create('posts', function (Blueprint $table) {
@@ -462,11 +462,11 @@ Schema::create('posts', function (Blueprint $table) {
 });
 ```
 
-Now, we need a way to provide our end-user with the option to allow specific models to have a relationship with our `Post` model. **Traits** offer an excellent solution for this exact purpose.
+Теперь нам нужен способ предоставить нашему конечному пользователю возможность разрешить конкретным моделям иметь связь с нашей моделью `Post`. **Трейты** предлагают отличное решение именно для этой цели.
 
-### Providing a Trait
+### Предоставление трейта
 
-Create a `Traits` folder in the `src/` directory and add the following `HasPosts` trait:
+Создайте папку `Traits` в каталоге `src/` и добавьте следующий трейт `HasPosts`:
 
 ```php
 // 'src/Traits/HasPosts.php'
@@ -485,26 +485,26 @@ trait HasPosts
 }
 ```
 
-Now the end-user can add a `use HasPosts` statement to any of their models (likely the `User` model), which would automatically register the one-to-many relationship with our `Post` model. This allows creating new posts as follows:
+Теперь конечный пользователь может добавить оператор `use HasPosts` к любой из своих моделей, вероятно, модель `User`, который автоматически зарегистрирует отношение «один-ко-многим» с нашей моделью `Post`. Это позволит создавать новые посты следующим образом:
 
 ```php
-// Given we have a User model, using the HasPosts trait
+// Учитывая, что у нас есть модель `User`, использующая трейт `HasPosts`
 $user = User::first();
 
-// We can create a new post from the relationship
+// мы можем создать новый пост из отношений.
 $user->posts()->create([
   'title' => 'Some title',
   'body' => 'Some body',
 ]);
 ```
 
-### Testing the Polymorphic Relationship
+### Тестирование полиморфных отношений
 
-Of course, we want to prove that any model using our `HasPost` trait can create new posts and that those posts are stored correctly.
+Конечно, мы хотим доказать, что любая модель, использующая трейт `HasPost`, может создавать новые посты и, что эти посты будут корректно сохранены.
 
-Therefore, we’ll create a new `User` model, not within the `src/Models/` directory, but rather in our `tests/` directory.
+Поэтому мы создадим новую модель `User`, но не в каталоге `src/Models/`, а в нашем каталоге `tests/`.
 
-To create users within our tests we'll need to overwrite the `UserFactory` provided by the Orchestra Testbench package, as shown below.
+Чтобы создавать пользователей в наших тестах, нам нужно перезаписать `UserFactory` пакета Orchestra Testbench, как показано ниже:
 
 ```php
 // 'tests/UserFactory.php'
@@ -519,7 +519,7 @@ class UserFactory extends TestbenchUserFactory
   protected $model = User::class;
 
     /**
-     * Define the model's default state.
+     * Определить состояние модели по умолчанию.
      *
      * @return array
      */
@@ -536,7 +536,7 @@ class UserFactory extends TestbenchUserFactory
 }
 ```
 
-In the `User` model we’ll use the same traits available on the `User` model that ships with a standard Laravel project to stay close to a real-world scenario. Also, we use our own `HasPosts` trait and `UserFactory`:
+В модели `User` мы будем использовать те же трейты, что и в модели `User`, которая содержится в стандартном проектом Laravel, чтобы максимально приблизиться к реальному сценарию. Также мы используем собственный трейт `HasPosts` и `UserFactory`:
 
 ```php
 // 'tests/User.php'
@@ -567,7 +567,7 @@ class User extends Model implements AuthorizableContract, AuthenticatableContrac
 }
 ```
 
-Now that we have a `User` model, we also need to add a new migration (the standard users table migration that ships with Laravel) to our database`/migrations` as `create_users_table.php.stub`:
+Теперь, когда у нас есть модель `User`, нам также нужно добавить новую миграцию (стандартную миграцию таблицы пользователей, которая поставляется с Laravel) в наш каталог `database/migrations` как `create_users_table.php.stub`:
 
 ```php
 // 'database/migrations/create_users_table.php.stub'
@@ -609,7 +609,7 @@ class CreateUsersTable extends Migration
 }
 ```
 
-Also load the migration at the beginning of our tests, by including the migration and performing its `up()` method in our `TestCase`:
+Также загрузим миграцию в начале наших тестов, подключив файл миграции и выполнив метод `up()` в нашем `TestCase`:
 
 ```php
 // 'tests/TestCase.php'
@@ -618,15 +618,15 @@ public function getEnvironmentSetUp($app)
     include_once __DIR__ . '/../database/migrations/create_posts_table.php.stub';
     include_once __DIR__ . '/../database/migrations/create_users_table.php.stub';
 
-    // run the up() method (perform the migration)
+    // Выполнить метод `up()` импортированных классов миграции.
     (new \CreatePostsTable)->up();
     (new \CreateUsersTable)->up();
 }
 ```
 
-### Updating Our Post Model Factory
+### Обновление фабрики нашей модели Post
 
-Now that we can whip up `User` models with our new factory, let’s create a new `User` in our `PostFactory` and then assign it to “author_id” and “author_type”:
+Теперь, когда мы можем создавать модели `User` с помощью нашей новой фабрики, давайте создадим `User` в нашей `PostFactory`, а затем присвоим ему `author_id` и `author_type`:
 
 ```php
 // 'database/factories/PostFactory.php'
@@ -641,14 +641,14 @@ use JohnDoe\BlogPackage\Tests\User;
 class PostFactory extends Factory
 {
     /**
-     * The name of the factory's corresponding model.
+     * Название модели соответствующей фабрики.
      *
      * @var string
      */
     protected $model = Post::class;
 
     /**
-     * Define the model's default state.
+     * Определить состояние модели по умолчанию.
      *
      * @return array
      */
@@ -666,13 +666,13 @@ class PostFactory extends Factory
 }
 ```
 
-Next, we update the `Post` unit test to verify an ‘author_type’ can be specified.
+Затем мы обновляем модульный тест `Post`, чтобы убедиться, что можно присвоить `author_type`:
 
 ```php
 // 'tests/Unit/PostTest.php'
 class PostTest extends TestCase
 {
-  // other tests...
+  // Другие тесты ...
 
   /** @test */
   function a_post_has_an_author_type()
@@ -683,24 +683,24 @@ class PostTest extends TestCase
 }
 ```
 
-Finally, we need to verify that our test `User` can create a `Post` and it is stored correctly.
+Наконец, нам нужно убедиться, что наш тестовый `User` может создать `Post` и что он корректно сохраняется.
 
-Since we are not creating a new post using a call to a specific route in the application, let's store this test in the `Post` unit test. In the next section on “Routes & Controllers”, we’ll make a POST request to an endpoint to create a new `Post` model and therefore divert to a Feature test.
+Поскольку мы не создаем новый пост, используя вызов определенного маршрута в приложении, то давайте сохраним этот тест в модульном тесте `Post`. В следующем разделе [Маршруты, контроллеры и шаблоны](09-routing.md) мы сделаем POST-запрос к конечной точке, чтобы создать новую модель `Post` и, следовательно, перейти к функциональному тестированию.
 
-A Unit test that verifies the desired behavior between a `User` and a `Post` could look as follows:
+Модульный тест, который проверяет желаемое поведение между `User` и `Post`, может выглядеть следующим образом:
 
 ```php
 // 'tests/Unit/PostTest.php'
 class PostTest extends TestCase
 {
-  // other tests...
+  // Другие тесты ...
 
   /** @test */
   function a_post_belongs_to_an_author()
   {
-    // Given we have an author
+    // Учитывая, что у нас есть автор
     $author = User::factory()->create();
-    // And this author has a Post
+    // и у этого автора есть пост
     $author->posts()->create([
         'title' => 'My first fake post',
         'body'  => 'The body of this fake post',
@@ -709,8 +709,8 @@ class PostTest extends TestCase
     $this->assertCount(1, Post::all());
     $this->assertCount(1, $author->posts);
 
-    // Using tap() to alias $author->posts()->first() to $post
-    // To provide cleaner and grouped assertions
+    // Используя `tap()`, создадим псевдоним `$post` для `$author->posts()->first()`,
+    // чтобы обеспечит читабельность сгруппированных утверждений.
     tap($author->posts()->first(), function ($post) use ($author) {
         $this->assertEquals('My first fake post', $post->title);
         $this->assertEquals('The body of this fake post', $post->body);
@@ -720,4 +720,4 @@ class PostTest extends TestCase
 }
 ```
 
-At this stage, all of the tests should be passing.
+На этом этапе все тесты должны быть пройдены.
