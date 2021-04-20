@@ -8,23 +8,23 @@ date: 2019-09-17
 
 # Разработка пакетов для Laravel · Среда разработки
 
-## Installing Composer
+## Установка Composer
 
-There's a big chance that you already have Composer installed. However, if you haven't installed Composer already, the quickest way to get up and running is by copying the script provided on the download page of [Composer](https://getcomposer.org/download/). By copying and pasting the provided script in your command line, the `composer.phar` installer will be downloaded, run, and removed again. You can verify a successful installation by running `composer --version`. To update Composer to the latest version, run `composer self-update`.
+Есть большая вероятность, что у вас уже установлен Composer. Однако, если вы еще не установили Composer, то самый быстрый способ начать работу – скопировать сценарий, представленный на странице загрузки [Composer](https://getcomposer.org/download/). При копировании и вставке предоставленного сценария в вашу командную строку установщик `composer.phar` будет загружен, запущен и снова удален. Вы можете проверить успешность установки, запустив `composer --version`. Чтобы обновить Composer до последней версии, запустите `composer self-update`.
 
-## Package Skeleton
+## Каркас пакета
 
-To start with developing a package, first, create an empty directory. It is not necessary to nest packages in an existing Laravel project. I would highly recommend organizing your packages separate from your (Laravel) projects for the sake of clarity.
+Чтобы начать разработку пакета, сначала создайте пустой каталог. Нет необходимости вкладывать пакеты в существующий проект Laravel. Я настоятельно рекомендую организовывать ваши пакеты отдельно от ваших проектов Laravel.
 
-For example, I store all packages in `~/packages/` and my Laravel apps live in `~/websites/`.
+Например, я храню все пакеты в `~/packages/`, а мои приложения Laravel «живут» в `~/websites/`.
 
 ## Composer.json
 
-Let's start by creating a `composer.json` file in the root of your package directory, having a minimal configuration (as shown below). Replace all details from the example with your own.
+Начнем с создания файла `composer.json` в корне каталога вашего пакета, имеющего минимальную конфигурацию (как показано ниже). Замените все детали из примера своими.
 
-It is best to be consistent with naming your packages. The standard convention is to use your GitHub / Gitlab / Bitbucket / etc.` username followed by a forward-slash ("/") and then a kebab cased version of your package name.
+Лучше всего следовать соглашению при именовании ваших пакетов. Стандартное соглашение – использовать ваше имя пользователя GitHub / Gitlab / Bitbucket / и т. д., за которым следует косая черта «/», а затем имя вашего пакета в регистре `kebab-case`.
 
-An example `composer.json` is highlighted below.
+Пример `composer.json` указан ниже:
 
 ```json
 {
@@ -42,15 +42,15 @@ An example `composer.json` is highlighted below.
 }
 ```
 
-Alternatively, you can create your `composer.json` file by running `composer init` in your empty package directory.
+В качестве альтернативы вы можете создать свой файл `composer.json`, используя команду `composer init` в пустом каталоге вашего пакета.
 
-If you're planning to **publish** the package, it is important to choose an appropriate package type (in our case, a "library") and license (e.g., "MIT"). Learn more about open source licenses at [ChooseALicense.com](https://choosealicense.com/).
+Если вы планируете **опубликовать** пакет, то важно выбрать подходящий тип пакета (в нашем случае `library`) и лицензию, например, «MIT». Узнайте больше о лицензиях с открытым исходным кодом на сайте [ChooseALicense.com](https://choosealicense.com/).
 
-## Namespacing
+## Пространство имен
 
-Since we want to use the (conventional) `src/` directory to store our code, we need to tell Composer to map the package's namespace to that specific directory when creating the autoloader (`vendor/autoload.php`).
+Поскольку мы хотим использовать каталог `src/` для хранения нашего кода, нам нужно указать Composer сопоставить пространство имен пакета с этим конкретным каталогом при создании автозагрузчика (`vendor/autoload.php`).
 
-We can register our namespace under the "psr-4" autoload key in the `composer.json` file as follows (replace the namespace with your own):
+Мы можем зарегистрировать наше пространство имен под ключом `psr-4` ключа `autoload` файла `composer.json` следующим образом (замените пространство имен своим собственным):
 
 ```json
 {
@@ -66,13 +66,13 @@ We can register our namespace under the "psr-4" autoload key in the `composer.js
 }
 ```
 
-## PSR-4 Autoloading
+## Автозагрузка PSR-4
 
-Now, you might wonder why we needed a "psr-4" key. PSR stands for PHP Standards Recommendations devised by the [PHP Framework Interoperability Group](https://www.php-fig.org/) (PHP-FIG). This group of 20 members, representing a cross-section of the PHP community, proposed a [series of PSR's](https://www.php-fig.org/psr/).
+Теперь вы можете задаться вопросом, зачем нам нужен ключ `psr-4`. PSR – рекомендации по стандартам PHP, разработанные [группой совместимости фреймворков PHP](https://www.php-fig.org/) (PHP-FIG). Эта группа из 20 участников, представляющих разные слои сообщества PHP, предложила [серию PSR](https://www.php-fig.org/psr/).
 
-In the list, PSR-4 represents a recommendation regarding autoloading classes from file paths, replacing the until then prevailing [PSR-0 autoloading standard](https://www.php-fig.org/psr/psr-0/).
+PSR-4 представляет собой рекомендацию относительно автозагрузки классов с учетом путей к файлам, заменив существовавший до того времени [стандарт автозагрузки PSR-0](https://www.php-fig.org/psr/psr-0/).
 
-The significant difference between PSR-0 and PSR-4 is that PSR-4 allows to map a base directory to a particular namespace and therefore permits shorter namespaces. I think [this comment](https://stackoverflow.com/questions/24868586/what-are-the-differences-between-psr-0-and-psr-4/50226226#50226226) on StackOverflow has a clear description of how PSR-0 and PSR-4 work.
+Существенная разница между PSR-0 и PSR-4 заключается в том, что PSR-4 позволяет сопоставить базовый каталог с частью пространства имени и, следовательно, допускает более короткие пространства имен. Я думаю, что этот [комментарий](https://stackoverflow.com/questions/24868586/what-are-the-differences-between-psr-0-and-psr-4/50226226#50226226) на StackOverflow содержит четкое описание того, как PSR-0 и PSR-4 работают.
 
 PSR-0
 
@@ -85,9 +85,9 @@ PSR-0
 }
 ```
 
-- Looking for `Book\History\UnitedStates` in `src/Book/History/UnitedStates.php`
+- Искать `Book\History\UnitedStates` в `src/Book/History/UnitedStates.php`
 
-- Looking for `Vehicle\Air\Wings\Airplane` in `src/Vehicle/Air/Wings/Airplane.php`
+- Искать `Vehicle\Air\Wings\Airplane` в `src/Vehicle/Air/Wings/Airplane.php`
 
 PSR-4
 
@@ -100,17 +100,17 @@ PSR-4
 }
 ```
 
-- Looking for `Book\History\UnitedStates` in `src/History/UnitedStates.php`
+- Искать `Book\History\UnitedStates` в `src/History/UnitedStates.php`
 
-- Looking for `Vehicle\Air\Wings\Airplane` in `src/Air/Wings/Airplane.php`
+- Искать `Vehicle\Air\Wings\Airplane` в `src/Air/Wings/Airplane.php`
 
-## Importing the Package Locally
+## Локальный импорт пакета
 
-To help with development, you can require a local package in a local Laravel project.
+В помощь с разработкой, вам может потребоваться локальный пакет в локальном проекте Laravel.
 
-If you have a local Laravel project, you can require your package locally by defining a custom so-called "repository" in the `composer.json` file **of your Laravel application**.
+Если у вас есть локальный проект Laravel, то вы можете добавить в зависимость свой пакет локально, определив собственный так называемый «репозиторий» в файле `composer.json` **вашего приложения Laravel**.
 
-Add the following "repositories" key below the "scripts" section in `composer.json` file of your Laravel app (replace the "url" with the directory where your package lives):
+Добавьте следующий ключ `repositories` под ключом `scripts` файла `composer.json` вашего приложения Laravel, заменив значение `url` на каталог, в котором находится ваш пакет:
 
 ```json
 {
@@ -125,13 +125,13 @@ Add the following "repositories" key below the "scripts" section in `composer.js
 }
 ```
 
-You can now require your local package in the Laravel application using your chosen namespace of the package. Following our example, this would be:
+Теперь вы можете включить свой локальный пакет в приложении Laravel, используя выбранное пространство имен пакета. Следуя нашему примеру, это будет:
 
 ```bash
 composer require johndoe/blogpackage
 ```
 
-If you have multiple packages in the same directory and want to instruct Composer to look for all of them, you can list the package location by using a wildcard `*` as follows:
+Если у вас есть несколько пакетов в одном каталоге и вы хотите, чтобы Composer выполнял поиск всех, то вы можете указать расположение пакета, используя метасимвол подстановки `*` следующим образом:
 
 ```json
 {
@@ -147,22 +147,22 @@ If you have multiple packages in the same directory and want to instruct Compose
 ```
 
 
-**Important:** you will need to perform a composer update in your Laravel application whenever you make changes to the `composer.json` file of your package or any providers it registers.
+**Важно:** вам нужно будет выполнять команду `composer update` в вашем приложении Laravel всякий раз, когда вы вносите изменения в файл `composer.json` вашего пакета или любых поставщиков, которые он регистрирует.
 
-## Orchestra Testbench
+## Пакет Orchestra Testbench
 
-We now have a `composer.json` file and an empty src/ directory. However, we don't have access to any Laravel specific functionality provided by the `Illuminate` components.
+Теперь у нас есть файл `composer.json` и пустой каталог `src/`. Однако у нас нет доступа к функционалу Laravel компонентов `Illuminate`.
 
-To use these components in our package, we'll require the [Orchestra Testbench](https://github.com/orchestral/testbench). Note that each version of the Laravel framework has a corresponding version of Orchestra Testbench. In this section, I'll assume we're developing a package for **Laravel 8.0**, which is the latest version at the moment of writing this section.
+Чтобы использовать эти компоненты в нашем пакете, нам потребуется [Orchestra Testbench](https://github.com/orchestral/testbench). Обратите внимание, что каждая версия фреймворка Laravel имеет соответствующую версию Orchestra Testbench. В этом разделе я предполагаю, что мы разрабатываем пакет для **Laravel 8.x**, который является последней версией на момент написания этого раздела.
 
 ```bash
 composer require --dev "orchestra/testbench=^6.0"
 ```
 
-The full compatibility table of the Orchestra Testbench is shown below, taken from [the original documentation](https://github.com/orchestral/testbench).
+Полная таблица совместимости Orchestra Testbench, взятая из [исходной документации](https://github.com/orchestral/testbench), приведена ниже:
 
 
-Laravel  | Testbench
+Фреймворк Laravel  | Пакет Testbench
 :---------|:----------
 8.x      | 6.x
 7.x      | 5.x
@@ -177,9 +177,9 @@ Laravel  | Testbench
 5.1.x    | 3.1.x
 5.0.x    | 3.0.x
 
-With Orchestra Testbench installed, you'll find a `vendor/orchestra/testbench-core` directory, containing a `laravel` and `src` directory. The `laravel` directory resembles the structure of an actual Laravel application, and the `src` directory provides the Laravel helpers that involve interaction with the project's directory structure (for example, related to file manipulation).
+После установки Orchestra Testbench вы найдете каталог `vendor/orchestra/testbench-core`, содержащий каталоги `laravel` и `src`. Каталог `laravel` напоминает структуру реального приложения Laravel, а каталог `src` содержит помощников Laravel, обеспечивающих взаимодействие со структурой каталогов проекта, например, связанные с манипуляциями с файлами.
 
-Before each test, TestBench creates a testing environment including a fully booted (test) application. If we use the Orchestra TestBench's basic `TestCase` for our tests, the methods as provided by the `CreatesApplication` trait in the `Orchestra\Testbench\Concerns` namespace will be responsible for creating this test application. If we look at one of these methods, `getBasePath()`, we'll see it directly points to the `laravel` folder that comes with Orchestra Testbench.
+Перед каждым тестом TestBench создает тестовое окружение полностью загруженного (тестового) приложения. Если мы используем базовый класс `TestCase` Orchestra TestBench для наших тестов, то за создание этого тестового приложения будут отвечать методы, предоставляемые трейтом `CreatesApplication` в пространстве имен `Orchestra\Testbench\Concerns`. Если мы посмотрим на один из этих методов, `getBasePath()`, то мы увидим, что он напрямую указывает на папку `laravel` пакета Orchestra Testbench.
 
 ```php
 // 'vendor/orchestra/testbench-core/src/Concerns/CreatesApplication.php'
