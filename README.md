@@ -9,8 +9,8 @@
 
 - [ ] [Введение](./docs/README.md)
 - [ ] [Основы](./docs/01-the-basics.md)
-- [ ] [Среда разработки](./docs/02-development-environment.md)
-- [ ] [Поставщики служб](./docs/03-service-providers.md)
+- [x] [Среда разработки](./docs/02-development-environment.md)
+- [x] [Поставщики служб](./docs/03-service-providers.md)
 - [ ] [Тестирование](./docs/04-testing.md)
 - [ ] [Фасады](./docs/05-facades.md)
 - [ ] [Команды Artisan](./docs/06-artisan-commands.md)

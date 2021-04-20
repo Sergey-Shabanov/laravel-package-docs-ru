@@ -8,17 +8,17 @@ date: 2019-09-17
 
 # Разработка пакетов для Laravel · Поставщики служб
 
-An essential part of a package is its **Service Provider**. Before creating our own, I'll explain what service providers are about in this section first. If you are familiar with the service providers, please continue to the next section.
+Важной частью пакета является его **Поставщик службы**. Прежде чем создавать наши собственные, я сначала объясню, что такое поставщики служб в этом разделе. Если вы уже знакомы с поставщиками служб, то перейдите к следующему разделу.
 
-As you might know, Laravel comes with a series of service providers, namely the `AppServiceProvider`, `AuthServiceProvider`, `BroadcastServiceProvider`, `EventServiceProvider` and `RouteServiceProvider`. These providers take care of "bootstrapping" (or "registering") application-specific services (as service container bindings), event listeners, middleware, and routes.
+Как вы, возможно, знаете, Laravel из коробки содержит несколько поставщиков служб, а именно `AppServiceProvider`, `AuthServiceProvider`, `BroadcastServiceProvider`, `EventServiceProvider` и `RouteServiceProvider`. Эти поставщики заботятся о «начальной загрузке» / «регистрации» через связывания в контейнере служб специфичных для приложения служб, слушателей событий, посредников и маршрутов.
 
-Every service provider extends the `Illuminate\Support\ServiceProvider` and implements a `register()` and a `boot()` method.
+Каждый поставщик службы расширяет `Illuminate\Support\ServiceProvider` и реализует методы `register()` / `boot()`.
 
-The `boot()` method is used to bind things in the service container. After all other service providers have been registered (i.e., all `register()` methods of all service providers were called, including third-party packages), Laravel will call the boot() method on all service providers.
+Метод `register()` используется для связывания сущностей в контейнере служб. После того, как все другие поставщики служб были зарегистрированы, то есть были вызваны все методы `register()` всех поставщиков служб, включая сторонние пакеты, тогда Laravel вызовет метод `boot()` для всех поставщиков служб.
 
-In the `register()` method, you might register a class binding in the service container, enabling a class to be resolved from the container. However, sometimes you will need to reference another class, in which case the `boot()` can be used.
+В методе `register()` вы можете зарегистрировать связывание класса в контейнере служб, позволяя классу быть извлеченным из контейнера. Однако иногда вам нужно сослаться на другой класс, и в этом случае можно использовать `boot()`.
 
-Here is an example of how a service provider may look and which things you might implement in a `register()` and `boot()` method.
+Вот пример того, как может выглядеть поставщик служб и какие вещи вы можете реализовать в методах `register()` и `boot()`:
 
 ```php
 use App\Calculator;
@@ -30,7 +30,7 @@ class AppServiceProvider extends ServiceProvider
 {
   public function register()
   {
-    // Register a class in the service container
+    // Регистрация класса в контейнере служб
     $this->app->bind('calculator', function ($app) {
       return new Calculator();
     });
@@ -38,14 +38,14 @@ class AppServiceProvider extends ServiceProvider
 
   public function boot()
   {
-    // Register a macro, extending the Illuminate\Collection class
+    // Регистрация макрокоманды, расширяющей класс `Illuminate\Collection`
     Collection::macro('rejectEmptyFields', function () {
       return $this->reject(function ($entry) {
         return $entry === null;
        });
     });
 
-    // Register an authorization policy
+    // Регистрация политики авторизации
     Gate::define('delete-post', function ($user, $post) {
       return $user->is($post->author);
     });
@@ -53,11 +53,11 @@ class AppServiceProvider extends ServiceProvider
 }
 ```
 
-## Creating a Service Provider
+## Создание поставщика служб
 
-We will create a service provider for our package, which contains specific information about our package's core. The package might use a config file, maybe some views, routes, controllers, database migrations, model factories, custom commands, etc. The service provider needs to **register** them. We will discuss each of these in subsequent chapters.
+Мы создадим поставщика служб для нашего пакета, который будет содержать конкретную информацию о ядре нашего пакета. Пакет может использовать файл конфигурации, возможно, некоторые шаблоны, маршруты, контроллеры, миграции баз данных, фабрики моделей, консольные команды и т.д. Поставщик служб должен **зарегистрировать** их. Мы обсудим каждую позицию в следующих главах.
 
-Since we've pulled in Orchestra Testbench, we can extend the `Illuminate\Support\ServiceProvider` and create our service provider in the `src/` directory as shown (replace naming with your details):
+Поскольку мы подключили Orchestra Testbench, мы можем расширить `Illuminate\Support\ServiceProvider` и создать собственного поставщика службы в каталоге `src/`:
 
 ```php
 // 'src/BlogPackageServiceProvider.php'
@@ -81,9 +81,9 @@ class BlogPackageServiceProvider extends ServiceProvider
 }
 ```
 
-## Autoloading
+## Автозагрузка
 
-To automatically register it with a Laravel project using Laravel's package auto-discovery we add our service provider to the "extra"> "laravel"> "providers" key in our package's `composer.json`:
+Чтобы автоматически зарегистрировать поставщика в проекте Laravel с помощью автоматического обнаружения пакетов Laravel, мы добавляем нашего поставщика служб к ключу `extra` -> `laravel` -> `providers` в файле `composer.json` нашего пакета:
 
 ```json
 {
@@ -101,4 +101,4 @@ To automatically register it with a Laravel project using Laravel's package auto
 }
 ```
 
-Now, whenever someone includes our package, the service provider will be loaded, and everything we've registered will be available in the application. Now let's see what we might want to register in this service provider.
+Теперь, когда кто-то затребует наш пакет, то будет загружен поставщик служб, и все, что мы зарегистрировали, будет доступно в приложении. <!--Теперь посмотрим, что мы можем зарегистрировать в этом поставщике служб.-->
