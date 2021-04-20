@@ -1,12 +1,12 @@
----
+<!-- ---
 title: 'Facades'
 description: 'Facades can provide end-users of your package with an easy-to-use (and understand) API for interaction with the functions (features) within your package. This section explains how to create your facades for your package.'
 tags: ['Facades', 'API']
 image: 'https://www.laravelpackage.com/assets/pages/laravelpackage.jpeg'
 date: 2019-09-17
----
+--- -->
 
-# Facades
+# Разработка пакетов для Laravel · Фасады
 
 The word 'facade' refers to a "superficial appearance or illusion of something," according to [Dictionary.com](https://www.dictionary.com/browse/facade). In architecture, the term refers to the front of a building.
 

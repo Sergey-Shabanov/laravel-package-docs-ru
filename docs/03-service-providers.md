@@ -1,12 +1,12 @@
----
+<!-- ---
 title: 'Service Providers'
 description: 'The Service Provider of a package is essential to register package-specific functionality. This section will cover the role and basics of a Service Provider and explains how to create and use a Service Provider for your package.'
 tags: ['Service Provider']
 image: 'https://www.laravelpackage.com/assets/pages/laravelpackage.jpeg'
 date: 2019-09-17
----
+--- -->
 
-# Service Providers
+# Разработка пакетов для Laravel · Поставщики служб
 
 An essential part of a package is its **Service Provider**. Before creating our own, I'll explain what service providers are about in this section first. If you are familiar with the service providers, please continue to the next section.
 

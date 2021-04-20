@@ -1,12 +1,12 @@
----
+<!-- ---
 title: 'Introduction'
 description: 'Learn to create Laravel specific PHP packages from scratch, following this open documentation. Contributions are welcomed.'
 tags: ['Laravel', 'PHP Package', 'Package Development']
 image: 'https://www.laravelpackage.com/assets/pages/laravelpackage.jpeg'
 date: 2019-09-17
----
+--- -->
 
-# Introduction to Package Development
+# Разработка пакетов для Laravel · Введение
 
 In my experience, learning to develop a package for Laravel can be quite challenging, which is why I previously wrote [a blog series about that](https://johnbraun.blog/posts/creating-a-laravel-package-1).
 
@@ -16,7 +16,7 @@ You are highly encouraged to participate and [contribute to this project](https:
 
 First of all, I want to thank Marcel Pociot. His clear and structured [video course](https://phppackagedevelopment.com/) encouraged me to create PHP packages myself. I can highly recommend his video course if you want to learn how to make (framework agnostic) PHP packages.
 
---- 
+---
 
 💡 Would you rather watch than read? The famous and reputable package builders from **Spatie** launched a full video course on [Laravel Package Development](https://laravelpackage.training).
 

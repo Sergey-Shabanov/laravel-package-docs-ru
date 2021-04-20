@@ -1,12 +1,12 @@
----
+<!-- ---
 title: 'Models and Migrations'
 description: 'Some packages need to offer a Laravel Model. This section explains how to allow for this and include your own database migrations. Additionally, the section will cover testing the models and migrations.'
 tags: ['Models', 'Migrations', 'Testing Models', 'Unit Test']
 image: 'https://www.laravelpackage.com/assets/pages/laravelpackage.jpeg'
 date: 2019-09-17
----
+--- -->
 
-# Models & Migrations
+# Разработка пакетов для Laravel · Модели и миграции
 
 There are scenarios where you'll need to ship one or more Eloquent models with your package. For example, when you're developing a Blog related package that includes a `Post` model.
 
@@ -374,7 +374,7 @@ Schema::create('posts', function (Blueprint $table) {
 
 Now that we have an “author_id” column on our `Post` model, let’s create a relationship between a `Post` and a `User`. However, we have a problem since we need a `User` model, but this model also comes out-of-the-box with a fresh installation of the Laravel framework…
 
-We can’t just provide our own `User` model, since you likely want your end-user to be able to hook up the `User` model from their Laravel app. 
+We can’t just provide our own `User` model, since you likely want your end-user to be able to hook up the `User` model from their Laravel app.
 
 Below, there are two options to create a relation  
 

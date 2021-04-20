@@ -1,12 +1,12 @@
----
+<!-- ---
 title: 'Mail'
 description: 'Send e-mail from your package by creating a custom Mailable class and template, utilizing the views provided by the package. Additionally, This chapter will cover testing of the Mail facade.'
 tags: ['Mail', 'Mail template', 'Views', 'Mailables', 'Testing Mail']
 image: 'https://www.laravelpackage.com/assets/pages/laravelpackage.jpeg'
 date: 2019-09-17
----
+--- -->
 
-# Mail
+# Разработка пакетов для Laravel · Почтовые отправления
 
 Using e-mails in your package works very much the same as in a normal Laravel application. However, in your package, you need to make sure you are loading a `views` directory from your package (or the end-user's exported version of it).
 

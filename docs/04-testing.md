@@ -1,12 +1,12 @@
----
+<!-- ---
 title: 'Testing'
 description: 'Testing is an essential part of every package to ensure proper behavior and allow refactoring with confidence. This section explains how to set up a testing environment using PHPUnit to create robust packages.'
 tags: ['Testing', 'PHPUnit', 'Directory Structure']
 image: 'https://www.laravelpackage.com/assets/pages/laravelpackage.jpeg'
 date: 2019-09-17
----
+--- -->
 
-# Testing
+# Разработка пакетов для Laravel · Тестирование
 
 It is essential to have proper test coverage for the package's provided code. Adding tests to our package can confirm the existing code's behavior, verify everything still works whenever adding new functionality, and ensure we can safely refactor our package with confidence at a later stage.
 
