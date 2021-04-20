@@ -8,19 +8,19 @@ date: 2019-09-17
 
 # Разработка пакетов для Laravel · Посредники
 
-If we look at an incoming HTTP request, this request is processed by Laravel's `index.php` file and sent through a series of pipelines. These include a series of ('before') middleware, where each will act on the incoming request before it eventually reaches the core of the application. A response is prepared from the application core, which is post-modified by all registered 'after' middleware before returning the response.
+Если мы посмотрим на входящий HTTP-запрос, этот запрос обрабатывается файлом `index.php` Laravel и отправляется через серию конвейеров. К ним относятся серия посредников «до», каждый из которых будет действовать в соответствии с входящим запросом, прежде чем он в конечном итоге достигнет ядра приложения. Ответ подготавливается из ядра приложения и пост-модифицируется перед возвратом всеми зарегистрированными посредниками серии «после».
 
-That's why middleware is excellent for authentication, verifying tokens, or applying any other check. Laravel also uses middleware to strip out empty characters from strings and encrypt cookies.
+Вот почему посредники отлично подходит для аутентификации, проверки токенов или применения любой другой проверки. Laravel также использует посредников для удаления пустых символов из строк и шифрования файлов Cookies.
 
-## Creating Middleware
+## Создание посредника
 
-There are two types of middleware: 1) acting on the request **before** a response is returned ("Before Middleware"); or 2) acting on the response before returning ("After Middleware").
+Существуют два типа посредников: 1) взаимодействующие с запросом до возврата ответа; 2) взаимодействующие с ответом перед его возвратом.
 
-Before discussing the two types of middleware, first create a new `Middleware` folder in the package's `src/Http` directory.
+Прежде чем обсуждать оба типа посредников, создайте новую папку `Middleware` в каталоге `src/Http` пакета.
 
-## Before Middleware
+## Посредник запроса
 
-A _before_ middleware performs an action on the request and then calls the next middleware in line. Generally, a Before Middleware takes the following shape:
+Посредник _запроса_ выполняет действие над запросом, а затем вызывает следующий посредник в очереди. Как правило, посредник _запроса_ имеет следующий вид:
 
 ```php
 <?php
@@ -33,16 +33,16 @@ class BeforeMiddleware
 {
     public function handle($request, Closure $next)
     {
-        // Perform action
+        // Выполнить действие ...
 
         return $next($request);
     }
 }
 ```
 
-As an illustration of a before middleware, let's add a middleware that capitalizes a 'title' parameter whenever present in the request (which would be silly in a real-world application).
+В качестве иллюстрации посредника запроса давайте добавим посредника, который преобразует первый символ входящего параметра `title` в верхний регистр, если тот присутствует в запросе, что было бы глупо в реальном приложении.
 
-Add a file called `CapitalizeTitle.php` which provides a `handle()` method accepting both the current request and a `$next` action:
+Добавьте файл с именем `CapitalizeTitle.php`, который содержит метод `handle()`, принимающий как текущий запрос, так и действие `$next`:
 
 ```php
 // 'src/Http/Middleware/CapitalizeTitle.php'
@@ -67,11 +67,11 @@ class CapitalizeTitle
 }
 ```
 
-## Testing Before Middleware
+## Тестирование посредника запроса
 
-Although we haven't _registered_ the middleware yet, and it will not be used in the application, we want to make sure that the `handle()` method shows the correct behavior.
+Хотя мы еще не _зарегистрировали_ посредника, да и в приложении использоваться он не будет, мы хотим убедиться, что метод `handle()` отражает ожидаемое поведение.
 
-Add a new `CapitalizeTitleMiddlewareTest.php` unit test in the `tests/Unit` directory. In this test, we'll assert that a title parameter on a `Request()` will contain the capitalized string after the middleware ran its `handle()` method:
+Добавьте новый модульный тест `CapitalizeTitleMiddlewareTest.php` в каталог `tests/Unit`. В этом тесте мы будем утверждать, что параметр `title` запроса будет содержать строку с заглавной буквы после того, как посредник выполнит свой метод `handle()`:
 
 ```php
 // 'tests/Unit/CapitalizeMiddlewareTest.php'
@@ -88,14 +88,14 @@ class CapitalizeTitleMiddlewareTest extends TestCase
     /** @test */
     function it_capitalizes_the_request_title()
     {
-        // Given we have a request
+        // Учитывая, что у нас есть запрос
         $request = new Request();
 
-        // with  a non-capitalized 'title' parameter
+        // с параметром `title`, состоящий из строчных букв
         $request->merge(['title' => 'some title']);
 
-        // when we pass the request to this middleware,
-        // it should've capitalized the title
+        // когда мы передаем запрос этому посреднику,
+        // `title` должен начинаться с заглавной буквы
         (new CapitalizeTitle())->handle($request, function ($request) {
             $this->assertEquals('Some title', $request->title);
         });
@@ -103,9 +103,9 @@ class CapitalizeTitleMiddlewareTest extends TestCase
 }
 ```
 
-## After Middleware
+## Посредник ответа
 
-The "after middleware" acts on the response returned after passing through all other middleware layers down the chain. Next, it modifies, and returns the response. Generally, it takes the following form:
+Посредник _ответа_ взаимодействует с ответом, возвращенным по цепочке после прохождения через других посредников. Затем он изменяет и возвращает ответ. Обычно он имеет следующий вид:
 
 ```php
 <?php
@@ -120,16 +120,16 @@ class AfterMiddleware
     {
         $response = $next($request);
 
-        // Perform action
+        // Выполнить действие ...
 
         return $response;
     }
 }
 ```
 
-## Testing After Middleware
+## Тестирование посредника ответа
 
-Similar to *before middleware*, we can unit test *after middleware* that operate on the `Response` for a given request and modify this request before it is passed down to the next layer of middleware. Given that we have an `InjectHelloWorld` middleware that injects the string 'Hello World' in each response, the following test would assert correct behavior:
+Подобно *посреднику запроса*, мы можем провести модульное тестирование *посредника ответа*, который взаимодействует с ответом текущего запроса, изменяя этот запрос, прежде чем он будет передан следующему посреднику. Предположим, что у нас есть посредник `InjectHelloWorld`, который зачем-то вставляет строку `Hello World` в каждый ответ, следующий тест должен стать подтверждением ожидаемого поведения:
 
 ```php
 // 'tests/Unit/InjectHelloWorldMiddlewareTest.php'
@@ -146,11 +146,11 @@ class InjectHelloWorldMiddlewareTest extends TestCase
     /** @test */
     function it_checks_for_a_hello_word_in_response()
     {
-        // Given we have a request
+        // Учитывая, что у нас есть запрос
         $request = new Request();
 
-        // when we pass the request to this middleware,
-        // the response should contain 'Hello World'
+        // когда мы передаем запрос этому посреднику,
+        // ответ должен содержать строку «Hello World»
         $response = (new InjectHelloWorld())->handle($request, function ($request) { });
 
         $this->assertStringContainsString('Hello World', $response);
@@ -158,13 +158,13 @@ class InjectHelloWorldMiddlewareTest extends TestCase
 }
 ```
 
-Now that we know the `handle()` method does its job correctly, let's look at the two options to register the middleware: **globally** vs. **route specific**.
+Теперь, когда мы знаем, что метод `handle()` выполняет свою работу правильно, давайте рассмотрим два варианта регистрации посредников: **глобально** и **для конкретного маршрута**.
 
-## Global middleware
+## Глобальный посредник
 
-Global middleware is, as the name implies, globally applied. Each request will pass through these middlewares.
+Глобальный посредник, как следует из названия, применяется глобально. Каждый запрос будет проходить через этот посредник.
 
-If we want our capitalization check example to be applied globally, we can append this middleware to the `Http\Kernel` from our package's service provider. Make sure to import the _Http Kernel_ contract, not the _Console Kernel_ contract:
+Если мы хотим, чтобы наш пример с заглавной буквой применялся глобально, мы можем добавить этот посредник в `Http\Kernel` через поставщика служб нашего пакета. Обязательно импортируйте контракт `Http\Kernel`, а не контракт `Console\Kernel`:
 
 ```php
 // 'BlogPackageServiceProvider.php'
@@ -173,24 +173,24 @@ use JohnDoe\BlogPackage\Http\Middleware\CapitalizeTitle;
 
 public function boot()
 {
-  // other things ...
+  // Остальной код ...
 
   $kernel = $this->app->make(Kernel::class);
   $kernel->pushMiddleware(CapitalizeTitle::class);
 }
 ```
 
-This will push our middleware into the application's array of globally registered middleware.
+Это добавит наш посредник в массив глобально зарегистрированных посредников приложения.
 
-## Route middleware
+## Посредник маршрута
 
-In our case, you might argue that we likely don't have a 'title' parameter on each request. Probably even only on requests that are related to creating/updating posts. On top of that, we likely only ever want to apply this middleware to requests related to our blog posts.
+В нашем случае вы можете возразить, что у нас, скорее всего, нет параметра `title` для каждого запроса. Возможно даже только по запросам, связанным с созданием / обновлением постов. Вдобавок к этому мы, вероятно, когда-нибудь захотим применить этот посредник только к запросам, связанным с постами в нашем блоге.
 
-However, our example middleware will modify all requests which have a title attribute. This is probably not desired. The solution is to make the middleware route-specific.
+Однако посредник в нашем примере изменит все запросы, у которых есть атрибут `title`. Вероятно, это нежелательно. Решение состоит в том, чтобы сделать посредник специфичным для маршрута.
 
-Therefore, we can register an alias to this middleware in the resolved Router class, from within the `boot()` method of our service provider.
+Мы можем зарегистрировать псевдоним для этого посредника с помощью извлеченного класса `Router` в методе `boot()` нашего поставщика служб.
 
-Here's how to register the `capitalize` alias for this middleware:
+Вот как можно зарегистрировать псевдоним `capitalize` для этого посредника:
 
 ```php
 // 'BlogPackageServiceProvider.php'
@@ -199,14 +199,14 @@ use JohnDoe\BlogPackage\Http\Middleware\CapitalizeTitle;
 
 public function boot()
 {
-  // other things ...
+  // Остальной код ...
 
   $router = $this->app->make(Router::class);
   $router->aliasMiddleware('capitalize', CapitalizeTitle::class);
 }
 ```
 
-We can apply this middleware from within our controller by requiring it from the constructor:
+Мы можем применить этот посредник к нашему контроллеру, указав зависимость в конструкторе:
 
 ```php
 // 'src/Http/Controllers/PostController.php'
@@ -217,15 +217,15 @@ class PostController extends Controller
         $this->middleware('capitalize');
     }
 
-    // other methods... (will use this middleware)
+    // Другие методы будут использовать этот посредник ...
 }
 ```
 
-### Middleware Groups
+### Группы посредников
 
-Additionally, we can push our middleware to certain groups, like `web` or `api`, to make sure our middleware is applied on each route that belongs to these groups.
+Кроме того, мы можем добавить наш посредник в определенные группы, такие как `web` или `api`, чтобы убедиться, что наш посредник применяется для каждого маршрута, который принадлежит этим группам.
 
-To do so, tell the router to _push_ the middleware to a specific group (in this example, `web`):
+Чтобы определить посредника в определенную группу, вызовите метод `push` маршрутизатора, например, `web`:
 
 ```php
 // 'BlogPackageServiceProvider.php'
@@ -234,20 +234,20 @@ use JohnDoe\BlogPackage\Http\Middleware\CapitalizeTitle;
 
 public function boot()
 {
-  // other things ...
+  // Остальной код ...
 
   $router = $this->app->make(Router::class);
   $router->pushMiddlewareToGroup('web', CapitalizeTitle::class);
 }
 ```
 
-The route middleware groups of a Laravel application are located in the `App\Http\Kernel` class. When applying this approach, you need to be sure that this package's users have the specific middleware group defined in their application.
+Группы посредников маршрутов приложения Laravel расположены в классе `App\Http\Kernel`. Применяя этот подход, вы должны быть уверены, что у пользователей этого пакета есть указанная группа посредников, определенная в их приложении.
 
-## Feature Testing Middleware
+## Функциональное тестирование посредника
 
-Regardless of whether we registered the middleware globally or route specifically, we can test that the middleware is applied when making a request.
+Независимо от того, зарегистрировали ли мы посредник глобально или локально, мы можем проверить, применяется ли посредник при выполнении запроса.
 
-Add a new test to the `CreatePostTest` feature test, in which we'll assume our non-capitalized title will be capitalized after the request has been made.
+Добавьте новый тест `CreatePostTest` в каталог `Feature`. В данном тесте мы будем предполагать, что наш заголовок, состоящий из строчных букв, будет написан с заглавной буквы после того, как запрос будет выполнен.
 
 ```php
 // 'tests/Feature/CreatePostTest.php'
@@ -263,9 +263,9 @@ function creating_a_post_will_capitalize_the_title()
 
     $post = Post::first();
 
-    // 'New: ' was added by our event listener
+    // Префикс `New: ` был добавлен нашим слушателем событий.
     $this->assertEquals('New: Some title that was not capitalized', $post->title);
 }
 ```
 
-With the tests returning green, we've covered adding Middleware to your package.
+Когда тесты вернет зеленый, тогда будем считать, что мы рассмотрели добавление посредника в ваш пакет.

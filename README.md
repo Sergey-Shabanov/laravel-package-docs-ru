@@ -18,7 +18,7 @@
 - [ ] [Модели и миграции](./docs/08-models-and-migrations.md)
 - [ ] [Маршрутизация, контроллеры и шаблоны](./docs/09-routing.md)
 - [ ] [События и слушатели](./docs/10-events-and-listeners.md)
-- [ ] [Посредники](./docs/11-middleware.md)
+- [x] [Посредники](./docs/11-middleware.md)
 - [ ] [Почтовые отправления](./docs/12-mail.md)
 - [ ] [Очереди заданий](./docs/13-jobs.md)
 - [ ] [Уведомления](./docs/14-notifications.md)
