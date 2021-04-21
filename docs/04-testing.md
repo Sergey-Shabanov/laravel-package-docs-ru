@@ -8,24 +8,24 @@ date: 2019-09-17
 
 # Разработка пакетов для Laravel · Тестирование
 
-It is essential to have proper test coverage for the package's provided code. Adding tests to our package can confirm the existing code's behavior, verify everything still works whenever adding new functionality, and ensure we can safely refactor our package with confidence at a later stage.
+Очень важно иметь надлежащее тестовое покрытие для кода, предоставляемого пакетом. Добавление тестов в наш пакет может подтвердить поведение существующего кода, убедиться, что все по-прежнему работает при добавлении новых функций, и гарантировать, что мы сможем безопасно реорганизовать наш пакет на более позднем этапе.
 
-Additionally, having good code coverage can motivate potential contributors by giving them more confidence that their addition does not break something else in the package. Tests also allow other developers to understand how specific features of your package are to be used and give them confidence about your package's reliability.
+Кроме того, хорошее покрытие кода может мотивировать потенциальных участников, предоставляя им больше уверенности в том, что их вклад не нарушит что-то еще в пакете. Тесты также позволяют другим разработчикам понять, как следует использовать определенные функции вашего пакета, и придадут им уверенности в надежности вашего пакета.
 
-## Installing PHPUnit
+## Установка PHPUnit
 
-There are many options to test behavior in PHP. However, we'll stay close to Laravel's defaults, which uses the excellent tool PHPUnit.
+Есть много вариантов для тестирования поведения в PHP. Однако мы будем придерживаться стандарта Laravel, который использует отличный инструмент PHPUnit.
 
-Install PHPUnit as a dev-dependency in our package:
+Установим PHPUnit как зависимость `dev` в нашем пакете:
 
 ```bash
 composer require --dev phpunit/phpunit
 ```
 
-**Note:** you might need to install a specific version if you're developing a package for an older version of Laravel.
+> **Примечание:** вам может потребоваться установить определенную версию, если вы разрабатываете пакет для более старой версии Laravel.
 
-To configure PHPUnit, create a `phpunit.xml` file in the root directory of the package.
-Then, copy the following template to use an in-memory sqlite database and enable colorful reporting.
+Чтобы сконфигурировать PHPUnit, создайте файл `phpunit.xml` в корневом каталоге пакета.
+Затем скопируйте следующий шаблон, чтобы использовать базу данных sqlite, хранимую в памяти, и включить красочные отчеты.
 
 `phpunit.xml`:
 
@@ -65,11 +65,11 @@ Then, copy the following template to use an in-memory sqlite database and enable
 </phpunit>
 ```
 
-Note the dummy `APP_KEY` in the example above. This environment variable is consumed by [Laravel's encrypter](https://laravel.com/docs/8.x/encryption#using-the-encrypter), which your tests might be making use of. For most cases, the dummy value will be sufficient. However, you are free to either change this value to reflect an actual app key (of your Laravel application) or leave it off entirely if your test suite does not interact with the encrypter.
+Обратите внимание на фиктивный `APP_KEY` в приведенном выше примере. Эта переменная окружения используется [шифровальщиком Laravel](https://github.com/russsiq/laravel-docs-8.x-ru/blob/main/docs/encryption.md#using-the-encrypter), который может использоваться в наших тестах. В большинстве случаев фиктивного значения будет достаточно. Однако вы можете либо изменить это значение, чтобы отразить фактический ключ приложения (вашего приложения Laravel), либо полностью оставить его, если ваш набор тестов не взаимодействует с шифровальщиком.
 
-## Directory Structure
+## Структура каталогов
 
-To accommodate Feature and Unit tests, create a `tests/` directory with a `Unit` and `Feature` subdirectory and a base `TestCase.php` file. The structure looks as follows:
+Для размещения функциональных и модульных тестов создайте каталог `tests/` с подкаталогами `Unit` и `Feature` и базовым файлом `TestCase.php`. Структура выглядит следующим образом:
 
 ```json
 - tests
@@ -78,33 +78,33 @@ To accommodate Feature and Unit tests, create a `tests/` directory with a `Unit`
       TestCase.php
 ```
 
-The `TestCase.php` extends `\Orchestra\Testbench\TestCase` (see example below) and contains tasks related to setting up our “world” before each test is executed. In the `TestCase` class we will implement three important set-up methods:
+`TestCase.php` расширяет `\Orchestra\Testbench\TestCase` (см. пример ниже) и содержит задачи, связанные с настройкой нашего «мира» перед выполнением каждого теста. В классе `TestCase` мы реализуем три важных конфигурационных метода:
 
 - `getPackageProviders()`
 - `getEnvironmentSetUp()`
 - `setUp()`
 
-Let's look at these methods one by one.
+Давайте рассмотрим эти методы один за другим.
 
-`setUp()`
+### Метод `setUp()`
 
-You might have already used this method in your tests. Often it is used when you need a certain model in all following tests. The instantiation of that model can therefore be extracted to a setUp() method which is called before each test. Within the tests, the desired model can be retrieved from the Test class instance variable. When using this method, don't forget to call the parent setUp() method (and make sure to return void).
-
----
-
-`getEnvironmentSetUp()`
-
-As suggested by Orchestra Testbench: "If you need to add something early in the application bootstrapping process, you could use the getEnvironmentSetUp() method". Therefore, I suggest it is called before the setUp() method(s).
+Возможно, вы уже использовали этот метод в своих тестах. Часто его используют, когда нужна определенная модель во всех следующих тестах. Таким образом, экземпляр этой модели может быть извлечен в методе `setUp()`, который вызывается перед каждым тестом. В рамках тестов желаемую модель можно получить из переменной экземпляра класса `Test`. При использовании этого метода не забудьте вызвать родительский метод `setUp()`, и не забудьте вернуть `void`.
 
 ---
 
-`getPackageProviders()`
+### Метод `getEnvironmentSetUp()`
 
-As the name suggests, we can load our service provider(s) within the getPackageProviders() method. We'll do that by returning an array containing all providers. For now, we'll just include the package specific package provider, but imagine that if the package uses an EventServiceProvider, we would also register it here.
+Согласно документации Orchestra Testbench: «Если вам нужно добавить что-то на раннем этапе процесса начальной загрузки приложения, то вы можете использовать метод `getEnvironmentSetUp()`». Поэтому я предлагаю вызывать его перед методом `setUp()`.
 
 ---
 
-In a package, `TestCase` will inherit from the Orchestra Testbench TestCase:
+### Метод `getPackageProviders()`
+
+Как следует из названия, мы можем загрузить наших поставщиков служб в методе `getPackageProviders()`. Мы сделаем это, вернув массив, содержащий всех провайдеров. На данный момент мы просто включим поставщика для конкретного пакета, но представьте, что если пакет использует `EventServiceProvider`, мы также должны зарегистрировать его здесь.
+
+---
+
+В пакете `TestCase` наследует от `Orchestra\Testbench\TestCase`:
 
 ```php
 // 'tests/TestCase.php'
@@ -119,7 +119,7 @@ class TestCase extends \Orchestra\Testbench\TestCase
   public function setUp(): void
   {
     parent::setUp();
-    // additional setup
+    // Дополнительная установка ...
   }
 
   protected function getPackageProviders($app)
@@ -131,12 +131,12 @@ class TestCase extends \Orchestra\Testbench\TestCase
 
   protected function getEnvironmentSetUp($app)
   {
-    // perform environment setup
+    // Выполнить установку окружения ...
   }
 }
 ```
 
-Before we can run the PHPUnit test suite, we first need to map our testing namespace to the appropriate folder in the composer.json file under an "autoload-dev" (psr-4) key:
+Прежде чем мы сможем запустить набор тестов PHPUnit, нам сначала нужно сопоставить пространство имен тестирования с соответствующим каталогом в ​​файле `composer.json` под ключом `autoload-dev` -> `psr-4`:
 
 ```json
 {
@@ -152,4 +152,4 @@ Before we can run the PHPUnit test suite, we first need to map our testing names
 }
 ```
 
-Finally, re-render the autoload file by running `composer dump-autoload`.
+Наконец, выполните `composer dump-autoload` для перестроения файла автозагрузки.
