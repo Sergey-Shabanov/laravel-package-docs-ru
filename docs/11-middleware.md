@@ -1,8 +1,17 @@
 <!-- ---
-title: 'Middleware'
-description: 'Explore the different types of Middleware and how to make use of them within a Laravel package. Additionally, writing tests for the Middleware will be explained.'
-tags: ['Middleware', 'Before Middlware', 'After Middleware', 'Route Middleware', 'Middleware Groups', 'Global Middleware', 'Testing Middleware']
-image: 'https://www.laravelpackage.com/assets/pages/laravelpackage.jpeg'
+title: "Middleware"
+description: "Explore the different types of Middleware and how to make use of them within a Laravel package. Additionally, writing tests for the Middleware will be explained."
+tags:
+  [
+    "Middleware",
+    "Before Middlware",
+    "After Middleware",
+    "Route Middleware",
+    "Middleware Groups",
+    "Global Middleware",
+    "Testing Middleware",
+  ]
+image: "https://www.laravelpackage.com/assets/pages/laravelpackage.jpeg"
 date: 2019-09-17
 --- -->
 
@@ -129,7 +138,7 @@ class AfterMiddleware
 
 ## Тестирование посредника ответа
 
-Подобно *посреднику запроса*, мы можем провести модульное тестирование *посредника ответа*, который взаимодействует с ответом текущего запроса, изменяя этот запрос, прежде чем он будет передан следующему посреднику. Предположим, что у нас есть посредник `InjectHelloWorld`, который зачем-то вставляет строку `Hello World` в каждый ответ, следующий тест должен стать подтверждением ожидаемого поведения:
+Подобно _посреднику запроса_, мы можем провести модульное тестирование _посредника ответа_, который взаимодействует с ответом текущего запроса, изменяя этот запрос, прежде чем он будет передан следующему посреднику. Предположим, что у нас есть посредник `InjectHelloWorld`, который зачем-то вставляет строку `Hello World` в каждый ответ, следующий тест должен стать подтверждением ожидаемого поведения:
 
 ```php
 // 'tests/Unit/InjectHelloWorldMiddlewareTest.php'

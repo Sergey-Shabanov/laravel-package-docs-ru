@@ -1,8 +1,8 @@
 <!-- ---
-title: 'Models and Migrations'
-description: 'Some packages need to offer a Laravel Model. This section explains how to allow for this and include your own database migrations. Additionally, the section will cover testing the models and migrations.'
-tags: ['Models', 'Migrations', 'Testing Models', 'Unit Test']
-image: 'https://www.laravelpackage.com/assets/pages/laravelpackage.jpeg'
+title: "Models and Migrations"
+description: "Some packages need to offer a Laravel Model. This section explains how to allow for this and include your own database migrations. Additionally, the section will cover testing the models and migrations."
+tags: ["Models", "Migrations", "Testing Models", "Unit Test"]
+image: "https://www.laravelpackage.com/assets/pages/laravelpackage.jpeg"
 date: 2019-09-17
 --- -->
 
@@ -124,6 +124,7 @@ php artisan vendor:publish --provider="JohnDoe\BlogPackage\BlogPackageServicePro
 ```
 
 ### Метод второй: автоматическая загрузка миграций
+
 Хотя описанный выше метод дает полный контроль над тем, какие миграции публиковать, Laravel предлагает альтернативный подход, использующий метод `loadMigrationsFrom` ([см. документацию](https://github.com/russsiq/laravel-docs-8.x-ru/blob/main/docs/packages.md#migrations)). Если указать каталог миграции в поставщике служб пакета, то все миграции будут запущены, когда конечный пользователь выполнит `php artisan migrate` из своего приложения Laravel.
 
 ```php
@@ -380,7 +381,7 @@ Schema::create('posts', function (Blueprint $table) {
 
 ### Вариант первый: получение модели пользователя из конфигурации аутентификации
 
-Если вы просто хотите создать связь между **аутентифицированными пользователями** и *например* моделью `Post`, то самым простым вариантом является ссылка на модель, которая используется в файле `config/auth.php`. По умолчанию это модель Eloquent `App\Models\User`.
+Если вы просто хотите создать связь между **аутентифицированными пользователями** и _например_ моделью `Post`, то самым простым вариантом является ссылка на модель, которая используется в файле `config/auth.php`. По умолчанию это модель Eloquent `App\Models\User`.
 
 Если вы просто хотите назначить модель Eloquent, которая отвечает за аутентификацию, то создайте отношение `belongsToMany` в модели `Post` следующим образом:
 

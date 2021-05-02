@@ -1,8 +1,17 @@
 <!-- ---
-title: 'Development Environment'
-description: 'Set up a stable environment for package development. Starting with installing Composer, configuring package details and PSR autoloading in composer.json to pulling in the package locally and testing with Orchestra Testbench.'
-tags: ['development setup', 'composer', 'package skeleton', 'PSR', 'namespacing', 'testing', 'testbench']
-image: 'https://www.laravelpackage.com/assets/pages/laravelpackage.jpeg'
+title: "Development Environment"
+description: "Set up a stable environment for package development. Starting with installing Composer, configuring package details and PSR autoloading in composer.json to pulling in the package locally and testing with Orchestra Testbench."
+tags:
+  [
+    "development setup",
+    "composer",
+    "package skeleton",
+    "PSR",
+    "namespacing",
+    "testing",
+    "testbench",
+  ]
+image: "https://www.laravelpackage.com/assets/pages/laravelpackage.jpeg"
 date: 2019-09-17
 --- -->
 
@@ -146,8 +155,7 @@ composer require johndoe/blogpackage
 }
 ```
 
-
-**Важно:** вам нужно будет выполнять команду `composer update` в вашем приложении Laravel всякий раз, когда вы вносите изменения в файл `composer.json` вашего пакета или любых поставщиков, которые он регистрирует.
+> **Важно:** вам нужно будет выполнять команду `composer update` в вашем приложении Laravel всякий раз, когда вы вносите изменения в файл `composer.json` вашего пакета или любых поставщиков, которые он регистрирует.
 
 ## Пакет Orchestra Testbench
 
@@ -161,21 +169,20 @@ composer require --dev "orchestra/testbench=^6.0"
 
 Полная таблица совместимости Orchestra Testbench, взятая из [исходной документации](https://github.com/orchestral/testbench), приведена ниже:
 
-
-Фреймворк Laravel  | Пакет Testbench
-:---------|:----------
-8.x      | 6.x
-7.x      | 5.x
-6.x      | 4.x
-5.8.x    | 3.8.x
-5.7.x    | 3.7.x
-5.6.x    | 3.6.x
-5.5.x    | 3.5.x
-5.4.x    | 3.4.x
-5.3.x    | 3.3.x
-5.2.x    | 3.2.x
-5.1.x    | 3.1.x
-5.0.x    | 3.0.x
+| Laravel | Testbench |
+| :------ | :-------- |
+| 8.x     | 6.x       |
+| 7.x     | 5.x       |
+| 6.x     | 4.x       |
+| 5.8.x   | 3.8.x     |
+| 5.7.x   | 3.7.x     |
+| 5.6.x   | 3.6.x     |
+| 5.5.x   | 3.5.x     |
+| 5.4.x   | 3.4.x     |
+| 5.3.x   | 3.3.x     |
+| 5.2.x   | 3.2.x     |
+| 5.1.x   | 3.1.x     |
+| 5.0.x   | 3.0.x     |
 
 После установки Orchestra Testbench вы найдете каталог `vendor/orchestra/testbench-core`, содержащий каталоги `laravel` и `src`. Каталог `laravel` напоминает структуру реального приложения Laravel, а каталог `src` содержит помощников Laravel, обеспечивающих взаимодействие со структурой каталогов проекта, например, связанные с манипуляциями с файлами.
 
